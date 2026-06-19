@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Union's - Login</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial; background: #0d0d1a; color: #fff;
+           display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .box { background: #16213e; padding: 40px; border-radius: 16px;
+           width: 380px; box-shadow: 0 0 40px rgba(233,69,96,0.3); }
+    .logo { text-align: center; font-size: 32px; font-weight: bold;
+            color: #e94560; margin-bottom: 8px; }
+    .sub { text-align: center; color: #aaa; margin-bottom: 30px; font-size: 14px; }
+    input { width: 100%; padding: 12px 15px; margin-bottom: 15px;
+            border: 1px solid #333; border-radius: 8px;
+            background: #0f3460; color: #fff; font-size: 14px; }
+    input:focus { outline: none; border-color: #e94560; }
+    button { width: 100%; padding: 13px; background: #e94560;
+             color: #fff; border: none; border-radius: 8px;
+             font-size: 16px; cursor: pointer; margin-bottom: 15px; }
+    button:hover { background: #c73652; }
+    .link { text-align: center; color: #aaa; font-size: 14px; }
+    .link a { color: #e94560; text-decoration: none; }
+    .msg { text-align: center; margin-bottom: 15px; font-size: 14px;
+           padding: 10px; border-radius: 8px; display: none; }
+    .msg.error { background: rgba(233,69,96,0.2); color: #e94560; display: block; }
+    .msg.success { background: rgba(0,200,100,0.2); color: #00c864; display: block; }
+  </style>
+</head>
+<body>
+<div class="box">
+  <div class="logo">Union's</div>
+  <div class="sub">Connect with strangers anonymously</div>
+  <div class="msg" id="msg"></div>
+  <input type="email" id="email" placeholder="Email" />
+  <input type="password" id="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
+  <div class="link">Don't have an account? <a href="register.html">Sign Up</a></div>
+</div>
+<script>
+  async function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const msg = document.getElementById('msg');
+    msg.className = 'msg';
+
+    const res = await fetch('/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('username', data.username);
+      window.location.href = 'index.html';
+    } else {
+      msg.textContent = data.message;
+      msg.className = 'msg error';
+    }
+  }
+</script>
+</body>
+</html>
